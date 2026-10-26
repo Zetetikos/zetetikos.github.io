@@ -177,7 +177,8 @@
       document.title=lang==="es"?"Zetetikos | Aprende. Comunica. Piensa.":lang==="fr"?"Zetetikos | Apprendre. Communiquer. Penser.":"Zetetikos | Learn. Communicate. Think.";
       document.getElementById("formStatus").textContent="";
     }
-    
+
+<script>
 document.getElementById("contactForm").addEventListener("submit", async function (e) {
   e.preventDefault();
 
@@ -228,8 +229,6 @@ document.getElementById("contactForm").addEventListener("submit", async function
     status.textContent = t.success;
     status.style.color = "green";
     form.reset();
-
-    // Notify the visitor without refreshing the page.
     alert(t.success);
 
   } catch (error) {
@@ -239,7 +238,7 @@ document.getElementById("contactForm").addEventListener("submit", async function
     button.disabled = false;
   }
 });
-
+</script>
 
     if (response.ok) {
       status.textContent =
