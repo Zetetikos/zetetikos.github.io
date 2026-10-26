@@ -122,8 +122,8 @@
     </section>
     <section class="contact" id="contact">
       <div class="container contact-grid">
-        <div><div class="eyebrow" data-i18n="contactEyebrow">Start here</div><h2 data-i18n="contactTitle">Tell us what you want to make possible.</h2><p data-i18n="contactLead">Share a little about your goals or your organization's needs. We'll use your enquiry to begin a conversation about a suitable next step.</p><div class="contact-note"><span>✳</span><div><b data-i18n="contactNoteTitle">A useful first conversation</b><br><span data-i18n="contactNoteText">Tell us your objective, preferred format and any timing considerations.</span></div></div><div class="contact-note"><span>⌁</span><div><b data-i18n="onlineTitle">Online worldwide</b><br><span data-i18n="onlineText">Enquiries welcome from individuals and organizations in different locations.</span></div></div></div>
-        <form id="contactForm">
+        <div><div class="eyebrow" data-i18n="contactEyebrow">Start here</div><h2 data-i18n="contactTitle">Tell us what you want to make possible.</h2><p data-i18n="contactLead">Share a little about your goals or your organization's needs. We'll use your enquiry to begin a conversation about a suitable next step.</p><div class="contact-note"><span>✳</span><div><b data-i18n="contactNoteTitle">A useful first conversation</b><br><span data-i18n="contactNoteText">Tell us your objective, preferred format and any timing considerations.</span></div></div><div class="contact-note"><span>⌁</span><div><b data-i18n="onlineTitle">Online worldwide</b><br><span data-i18n="onlineText">Enquiries welcome from individuals and organizations in different locations.</span></div></div></div>     
+<form id="contactForm" action="https://submit-form.com/Wp1UP1rC9" method="POST">
           <div class="form-row"><div class="field"><label for="name" data-i18n="labelName">Your name</label><input id="name" name="name" autocomplete="name" required data-i18n-placeholder="phName" placeholder="Name"></div><div class="field"><label for="email" data-i18n="labelEmail">Email address</label><input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com"></div></div>
           <div class="form-row"><div class="field"><label for="audienceSelect" data-i18n="labelAudience">I am enquiring as</label><select id="audienceSelect" name="audience"><option value="Individual" data-i18n="optIndividual">An individual learner</option><option value="Company" data-i18n="optCompany">A company / organization</option><option value="Other" data-i18n="optOther">Other</option></select></div><div class="field"><label for="interest" data-i18n="labelInterest">Area of interest</label><select id="interest" name="interest"><option value="English language coaching" data-i18n="optEnglish">English language coaching</option><option value="Professional English" data-i18n="optBusiness">Professional / business English</option><option value="Customized education program" data-i18n="optCustom">Customized education program</option><option value="Other" data-i18n="optOther">Other</option></select></div></div>
           <div class="field"><label for="message" data-i18n="labelMessage">What would you like to achieve?</label><textarea id="message" name="message" required data-i18n-placeholder="phMessage" placeholder="Tell us briefly about your goals..."></textarea></div>
@@ -181,17 +181,55 @@
     const menuBtn=document.getElementById("menuBtn"),navLinks=document.getElementById("navLinks");
     menuBtn.addEventListener("click",()=>{const open=navLinks.classList.toggle("open");menuBtn.setAttribute("aria-expanded",String(open))});
     navLinks.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>{navLinks.classList.remove("open");menuBtn.setAttribute("aria-expanded","false")}));
-    document.getElementById("contactForm").addEventListener("submit",e=>{
-      e.preventDefault();const lang=document.getElementById("language").value,t=translations[lang];
-      if(!CONTACT_EMAIL.trim()){document.getElementById("formStatus").textContent=t.formNoEmail;return}
-      const d=new FormData(e.currentTarget);
-      const subject=encodeURIComponent("Zetetikos enquiry — "+d.get("interest"));
-      const body=encodeURIComponent("Name: "+d.get("name")+"\nEmail: "+d.get("email")+"\nEnquiry type: "+d.get("audience")+"\nInterest: "+d.get("interest")+"\n\nMessage:\n"+d.get("message"));    
-window.location.href = "mailto:" + CONTACT_EMAIL +
-  "?subject=" + encodeURIComponent(subject) +
-  "&body=" + encodeURIComponent(body);
-      document.getElementById("formStatus").textContent=t.formOpenEmail;
+    document.getElementById("contactForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  const form = e.currentTarget;
+  const lang = document.getElementById("language").value;
+  const t = translations[lang];
+  const status = document.getElementById("formStatus");
+  const submitButton = form.querySelector('button[type="submit"]');
+
+  status.textContent = "";
+  submitButton.disabled = true;
+
+  try {
+    const response = await fetch("https://submit-form.com/Wp1UP1rC9", {
+      method: "POST",
+      body: new FormData(form),
+      headers: {
+        "Accept": "application/json"
+      }
     });
+
+    if (response.ok) {
+      status.textContent =
+        lang === "es"
+          ? "¡Gracias! Tu consulta se ha enviado correctamente."
+          : lang === "fr"
+          ? "Merci ! Votre demande a bien été envoyée."
+          : "Thank you! Your enquiry has been sent successfully.";
+
+      form.reset();
+    } else {
+      status.textContent =
+        lang === "es"
+          ? "No se pudo enviar tu consulta. Inténtalo de nuevo."
+          : lang === "fr"
+          ? "L’envoi a échoué. Veuillez réessayer."
+          : "Your enquiry could not be sent. Please try again.";
+    }
+  } catch (error) {
+    status.textContent =
+      lang === "es"
+        ? "Error de conexión. Comprueba tu conexión e inténtalo de nuevo."
+        : lang === "fr"
+        ? "Erreur de connexion. Vérifiez votre connexion et réessayez."
+        : "Connection error. Please check your connection and try again.";
+  } finally {
+    submitButton.disabled = false;
+  }
+});
   </script>
 </body>
 </html>
