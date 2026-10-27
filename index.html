@@ -180,6 +180,13 @@
       document.getElementById("formStatus").textContent="";
     }
 
+const languageSelect = document.getElementById("language");
+
+languageSelect.addEventListener("change", function () {
+  setLanguage(this.value);
+});
+
+setLanguage(languageSelect.value || "en");
 document.getElementById("contactForm").addEventListener("submit", async function (e) {
   e.preventDefault();
 
